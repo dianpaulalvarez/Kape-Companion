@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:elevation="2dp">
+
+    <!-- User info and rating in one line -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/reviewUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textStyle="bold"
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <RatingBar
+            android:id="@+id/reviewRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:isIndicator="true"
+            android:rating="5.0" />
+
+        <TextView
+            android:id="@+id/tvRatingValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.0"
+            android:textSize="12sp"
+            android:textColor="@color/muted"
+            android:layout_marginStart="4dp" />
+
+    </LinearLayout>
+
+    <!-- Review comment -->
+    <TextView
+        android:id="@+id/reviewComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is a review comment about the coffee. The taste was amazing and the aroma was fantastic!"
+        android:textSize="14sp"
+        android:textColor="@color/textColor"
+        android:layout_marginTop="8dp"
+        android:lineSpacingExtra="4dp"/>
+
+    <!-- Date -->
+    <TextView
+        android:id="@+id/tvReviewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dec 10, 2024"
+        android:textSize="12sp"
+        android:textColor="@color/muted"
+        android:layout_marginTop="8dp" />
+
+    <!-- To Review Button - Naka-gone na -->
+    <Button
+        android:id="@+id/btnToReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To Review"
+        android:visibility="gone"
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

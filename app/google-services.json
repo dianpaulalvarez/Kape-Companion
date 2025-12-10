@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3791405239",
+    "project_id": "coffee-companion-e3c06",
+    "storage_bucket": "coffee-companion-e3c06.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3791405239:android:a22c73ced757adb4b98d32",
+        "android_client_info": {
+          "package_name": "com.lu.coffeecompanion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOOs_FAT0Taw1PxExoSxmQG-XnYNAsSUc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

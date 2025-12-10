@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // Idagdag ito
+    }
+    dependencies {
+        classpath libs.gradle
+        classpath libs.google.services
+
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.7.0' apply false
+    id 'com.google.gms.google-services' version '4.4.4' apply false
+}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_marginBottom="12dp"
+    android:padding="16dp"
+    android:elevation="2dp">
+
+    <!-- Product Name -->
+    <TextView
+        android:id="@+id/tvItemName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arabica Coffee Blend"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#212121" />
+
+    <!-- Rating Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Rating:"
+            android:textSize="14sp"
+            android:textColor="#757575" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="0dp" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1"
+            android:rating="5"
+            android:progressTint="#FFD700" />
+
+        <TextView
+            android:id="@+id/tvRatingValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.0"
+            android:textSize="14sp"
+            android:textColor="#FF6B00"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <!-- Review Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Review (Optional):"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etComment"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="Share your thoughts about this product..."
+        android:inputType="textMultiLine"
+        android:gravity="top"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edittext_shoppee_background"
+        android:textSize="14sp" />
+
+    <!-- Character Counter -->
+    <TextView
+        android:id="@+id/tvCharCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/500"
+        android:textSize="12sp"
+        android:textColor="#9E9E9E"
+        android:layout_gravity="end"
+        android:layout_marginTop="4dp" />
+
+    <!-- Shopee Tips -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💡 Tip: Share details about taste, aroma, and quality"
+        android:textSize="12sp"
+        android:textColor="#9E9E9E"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvOrderId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order #123456"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Overall Rating -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Overall Rating"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <RatingBar
+        android:id="@+id/ratingBarOverall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1"
+        android:layout_gravity="center"
+        android:isIndicator="true"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/tvOverallComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your comment here..."
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:padding="12dp"
+        android:background="@drawable/shape_card" />
+
+    <TextView
+        android:id="@+id/tvRatingDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rated on Jan 01, 2024"
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Product Ratings -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product Ratings"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="20dp">
+
+        <LinearLayout
+            android:id="@+id/containerProductRatings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Close"
+        android:backgroundTint="@color/primary" />
+
+</LinearLayout>

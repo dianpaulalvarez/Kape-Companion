@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.application'
+
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'
+}
+
+android {
+    viewBinding {
+        enabled = true
+    }
+
+    namespace 'com.lu.coffeecompanion'
+    compileSdk 35   // ✅ Updated from 34 to 35
+
+    defaultConfig {
+        applicationId "com.lu.coffeecompanion"
+        minSdk 24
+        targetSdk 36   // ✅ Okay na ‘to, no need to change
+        versionCode 11
+        versionName "11"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    dependencies {
+        implementation 'com.github.bumptech.glide:glide:4.15.1'
+        implementation 'com.google.android.material:material:1.10.0'
+    }
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+    implementation libs.swiperefreshlayout
+    implementation libs.credentials
+    implementation libs.credentials.play.services.auth
+    implementation libs.googleid
+    implementation libs.firebase.database
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    implementation platform(libs.firebase.bom)
+    implementation libs.google.firebase.auth
+    implementation libs.material.v190
+
+    implementation libs.glide
+    annotationProcessor libs.compiler
+    implementation libs.core
+
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:34.5.0')
+
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'com.google.firebase:firebase-database:20.3.0'
+    implementation 'com.google.firebase:firebase-auth:22.3.1'
+    implementation 'com.github.Baseflow:PhotoView:2.3.0'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+    implementation 'com.google.firebase:firebase-firestore:24.7.0'
+    implementation 'com.google.firebase:firebase-storage:20.2.0'
+    implementation 'com.google.firebase:firebase-auth:22.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+}
+apply plugin: 'com.google.gms.google-services'
+

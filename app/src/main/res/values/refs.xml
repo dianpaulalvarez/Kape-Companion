@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="ic_info" />
+    <drawable name="rounded_bg" />
+    <drawable name="card_background" />
+    <drawable name="edittext_shoppee_background" />
+    <drawable name="placeholder_image" />
+</resources>

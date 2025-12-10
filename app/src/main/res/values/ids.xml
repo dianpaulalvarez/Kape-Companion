@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tvTotalGcashPayments" type="id" />
+    <item name="cardAddCodPayment" type="id" />
+    <item name="btnStartDate" type="id" />
+    <item name="btnEndDate" type="id" />
+    <item name="tvChartGcashTotal" type="id" />
+    <item name="tvChartCodTotal" type="id" />
+    <item name="tvChartOverallTotal" type="id" />
+    <item name="tvDateRange" type="id" />
+    <item name="tvOrderNumber" type="id" />
+    <item name="textView" type="id" />
+    <item name="tvItemsCount" type="id" />
+    <item name="tvMessage" type="id" />
+    <item name="review_feedback" type="id" />
+    <item name="review_item_name" type="id" />
+</resources>

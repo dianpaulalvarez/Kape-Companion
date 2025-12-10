@@ -1,0 +1,103 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:id="@+id/itemContainer"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Empty"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/itemName"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₱0.00"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:id="@+id/itemPrice"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lorem ipsum dolor"
+                    android:textSize="16sp"
+                    android:id="@+id/itemDescription"/>
+
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="Frappuccino"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/frappe"
+                    android:id="@+id/imageView"/>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    app:cardCornerRadius="100dp"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardBackgroundColor="@color/backgroundColor"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/plusButton"
+                        android:layout_width="22dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="Add to Cart"
+                        android:padding="8dp"
+                        android:src="@drawable/plus_one" />
+
+                </androidx.cardview.widget.CardView>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+</LinearLayout>
