@@ -289,6 +289,69 @@
 
         </androidx.cardview.widget.CardView>
 
+        <!-- Inventory Management Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardInventory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFF3E0"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="📦"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="16dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inventory"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/coffee_dark_brown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Manage product inventory and stock levels"
+                        android:textSize="14sp"
+                        android:textColor="@color/coffee_medium_brown"
+                        android:layout_marginTop="4dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:text="→"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textColor="@color/coffee_dark_brown" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
         <!-- Quick Stats Section -->
         <TextView
             android:layout_width="wrap_content"

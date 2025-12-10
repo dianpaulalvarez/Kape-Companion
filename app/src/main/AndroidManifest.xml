@@ -22,6 +22,7 @@
 
         <!-- Your existing activities -->
         <activity android:name=".AllReviewsActivity" android:exported="false" />
+        <activity android:name=".InventoryManagementActivity" android:exported="false" />
         <activity android:name=".ProductReviewsActivity" android:exported="false" />
         <activity android:name=".ToReviewActivity" android:exported="false" />
         <activity android:name=".OrderDetailsActivity" android:exported="false" />

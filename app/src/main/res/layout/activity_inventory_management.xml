@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/coffee_dark_brown"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_coffee_back"
+            android:contentDescription="Back"
+            app:tint="@color/white"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Inventory Management"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+    <!-- Button Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
+
+        <!-- Add Item Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Add New Item"
+            android:textSize="16sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="14dp"
+            app:icon="@drawable/ic_coffee_add"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/coffee_dark_brown"
+            android:textColor="@color/white" />
+
+        <!-- View Archived Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewArchived"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="View Archived"
+            android:textSize="16sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="14dp"
+            app:icon="@drawable/ic_archive"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/coffee_medium_brown"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <!-- Inventory Table -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Table Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/coffee_light_brown"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="Product Name"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/coffee_dark_brown" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Stock"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/coffee_dark_brown"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Price"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/coffee_dark_brown"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Actions"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/coffee_dark_brown"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- Inventory Items List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewInventory"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="8dp" />
+
+            <!-- Empty State -->
+            <TextView
+                android:id="@+id/tvEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No inventory items found.\nTap 'Add New Item' to add products."
+                android:textSize="16sp"
+                android:textColor="@color/coffee_medium_brown"
+                android:gravity="center"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

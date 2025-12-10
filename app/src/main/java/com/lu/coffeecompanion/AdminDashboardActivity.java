@@ -150,6 +150,15 @@ public class AdminDashboardActivity extends AppCompatActivity {
             });
         }
 
+        // Inventory Management
+        CardView inventoryCard = findViewById(R.id.cardInventory);
+        if (inventoryCard != null) {
+            inventoryCard.setOnClickListener(v -> {
+                Intent intent = new Intent(this, InventoryManagementActivity.class);
+                startActivity(intent);
+            });
+        }
+
         // Logout
         if (binding.btnLogout != null) {
             binding.btnLogout.setOnClickListener(v -> showLogoutDialog());

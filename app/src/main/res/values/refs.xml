@@ -5,4 +5,5 @@
     <drawable name="card_background" />
     <drawable name="edittext_shoppee_background" />
     <drawable name="placeholder_image" />
+    <drawable name="ic_coffee_edit" />
 </resources>
