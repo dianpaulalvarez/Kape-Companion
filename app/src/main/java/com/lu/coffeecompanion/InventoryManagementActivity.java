@@ -1,24 +1,38 @@
 package com.lu.coffeecompanion;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +45,11 @@ public class InventoryManagementActivity extends AppCompatActivity {
     private InventoryAdapter adapter;
     private List<InventoryItem> inventoryList;
     private TextView tvEmptyState;
+    private static final int PICK_IMAGE_REQUEST = 1001;
+    private Bitmap selectedImageBitmap;
+    private ImageView currentDialogImageView;
+    private androidx.appcompat.app.AlertDialog currentAddDialog;
+    private Bitmap dialogSelectedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +74,8 @@ public class InventoryManagementActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // Back button
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
-        // Add Item button
         findViewById(R.id.btnAddItem).setOnClickListener(v -> showAddItemDialog());
-
-        // View Archived button
         findViewById(R.id.btnViewArchived).setOnClickListener(v -> showArchivedItemsDialog());
     }
 
@@ -75,6 +89,17 @@ public class InventoryManagementActivity extends AppCompatActivity {
         EditText etProductName = dialogView.findViewById(R.id.etProductName);
         EditText etQuantity = dialogView.findViewById(R.id.etQuantity);
         EditText etPrice = dialogView.findViewById(R.id.etPrice);
+        ImageView ivProductImage = dialogView.findViewById(R.id.ivProductImage);
+        MaterialButton btnSelectImage = dialogView.findViewById(R.id.btnSelectImage);
+
+        dialogSelectedBitmap = null;
+
+        btnSelectImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+            currentDialogImageView = ivProductImage;
+        });
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             String productName = etProductName.getText().toString().trim();
@@ -89,17 +114,66 @@ public class InventoryManagementActivity extends AppCompatActivity {
             try {
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
-                addInventoryItem(productName, quantity, price);
+
+                if (dialogSelectedBitmap != null) {
+                    uploadImageAndAddItem(dialogSelectedBitmap, productName, quantity, price);
+                } else {
+                    addInventoryItem(productName, quantity, price, null);
+                }
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Please enter valid numbers", Toast.LENGTH_SHORT).show();
             }
         });
 
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+        currentAddDialog = builder.create();
+        currentAddDialog.show();
     }
 
-    private void addInventoryItem(String productName, int quantity, double price) {
+    private void uploadImageAndAddItem(Bitmap imageBitmap, String productName, int quantity, double price) {
+        Log.d("INVENTORY", "Starting image upload for: " + productName);
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Uploading image...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        byte[] imageData = baos.toByteArray();
+        Log.d("INVENTORY", "Image size: " + imageData.length + " bytes");
+
+        String filename = "inventory_" + System.currentTimeMillis() + ".jpg";
+        Log.d("INVENTORY", "Filename: " + filename);
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("inventory_images/" + filename);
+
+        UploadTask uploadTask = imageRef.putBytes(imageData);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            Log.d("INVENTORY", "Image uploaded to storage");
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageUrl = uri.toString();
+                Log.d("INVENTORY", "Got download URL: " + imageUrl);
+                progressDialog.dismiss();
+                addInventoryItem(productName, quantity, price, imageUrl);
+            }).addOnFailureListener(e -> {
+                progressDialog.dismiss();
+                Log.e("INVENTORY", "Failed to get download URL: " + e.getMessage(), e);
+                Toast.makeText(this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> {
+            progressDialog.dismiss();
+            Log.e("INVENTORY", "Failed to upload image: " + e.getMessage(), e);
+            Toast.makeText(this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }).addOnProgressListener(snapshot -> {
+            double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+            progressDialog.setMessage("Uploading: " + (int) progress + "%");
+        });
+    }
+
+    private void addInventoryItem(String productName, int quantity, double price, String imageUrl) {
+        Log.d("INVENTORY", "Adding item - Name: " + productName + ", ImageURL: " + imageUrl);
+
         Map<String, Object> item = new HashMap<>();
         item.put("productName", productName);
         item.put("quantity", quantity);
@@ -107,23 +181,56 @@ public class InventoryManagementActivity extends AppCompatActivity {
         item.put("isArchived", false);
         item.put("timestamp", System.currentTimeMillis());
 
+        if (imageUrl != null) {
+            item.put("imageUrl", imageUrl);
+            Log.d("INVENTORY", "Image URL added to Firestore: " + imageUrl);
+        } else {
+            Log.d("INVENTORY", "No image URL provided");
+        }
+
         firestore.collection("inventory")
                 .add(item)
                 .addOnSuccessListener(documentReference -> {
+                    Log.d("INVENTORY", "Item added with ID: " + documentReference.getId());
                     Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show();
                     loadInventory();
                 })
                 .addOnFailureListener(e -> {
+                    Log.e("INVENTORY", "Error adding item: " + e.getMessage(), e);
                     Toast.makeText(this, "Error adding item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            try {
+                selectedImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                dialogSelectedBitmap = selectedImageBitmap;
+
+                if (currentDialogImageView != null && selectedImageBitmap != null) {
+                    currentDialogImageView.setImageBitmap(selectedImageBitmap);
+                }
+
+                Log.d("INVENTORY", "Image selected and loaded successfully");
+
+            } catch (IOException e) {
+                Log.e("INVENTORY", "Error loading image: " + e.getMessage(), e);
+                Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void loadInventory() {
-        // Load all items first, then filter locally to avoid Firestore index requirements
+        Log.d("INVENTORY", "Loading inventory...");
         firestore.collection("inventory")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     inventoryList.clear();
+                    Log.d("INVENTORY", "Found " + queryDocumentSnapshots.size() + " documents");
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String id = document.getId();
@@ -131,24 +238,28 @@ public class InventoryManagementActivity extends AppCompatActivity {
                         Long quantity = document.getLong("quantity");
                         Double price = document.getDouble("price");
                         Boolean isArchived = document.getBoolean("isArchived");
+                        String imageUrl = document.getString("imageUrl");
 
-                        // Only add if not archived (isArchived == false or null)
+                        Log.d("INVENTORY", "Document: " + productName + ", ImageURL: " + imageUrl);
+
                         boolean shouldAdd = (isArchived == null || !isArchived) &&
                                 productName != null &&
                                 quantity != null &&
                                 price != null;
 
                         if (shouldAdd) {
-                            InventoryItem item = new InventoryItem(id, productName, quantity.intValue(), price);
+                            InventoryItem item = new InventoryItem(id, productName,
+                                    quantity.intValue(), price, imageUrl);
                             inventoryList.add(item);
+                            Log.d("INVENTORY", "Added to list: " + productName);
                         }
                     }
 
-                    // Sort by product name locally
                     inventoryList.sort((item1, item2) ->
                             item1.productName.compareToIgnoreCase(item2.productName));
 
                     adapter.notifyDataSetChanged();
+                    Log.d("INVENTORY", "Adapter notified, items: " + inventoryList.size());
 
                     if (inventoryList.isEmpty()) {
                         tvEmptyState.setVisibility(View.VISIBLE);
@@ -159,6 +270,7 @@ public class InventoryManagementActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    Log.e("INVENTORY", "Error loading inventory: " + e.getMessage(), e);
                     Toast.makeText(this, "Error loading inventory: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
@@ -189,7 +301,6 @@ public class InventoryManagementActivity extends AppCompatActivity {
     }
 
     private void showArchivedItemsDialog() {
-        // Load all items and filter archived ones locally
         firestore.collection("inventory")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -202,15 +313,14 @@ public class InventoryManagementActivity extends AppCompatActivity {
                         Double price = document.getDouble("price");
                         Boolean isArchived = document.getBoolean("isArchived");
 
-                        // Only add if archived (isArchived == true)
                         if (isArchived != null && isArchived &&
                                 productName != null && quantity != null && price != null) {
-                            InventoryItem item = new InventoryItem(id, productName, quantity.intValue(), price);
+                            String imageUrl = document.getString("imageUrl");
+                            InventoryItem item = new InventoryItem(id, productName, quantity.intValue(), price, imageUrl);
                             archivedItems.add(item);
                         }
                     }
 
-                    // Sort by product name locally
                     archivedItems.sort((item1, item2) ->
                             item1.productName.compareToIgnoreCase(item2.productName));
 
@@ -247,18 +357,22 @@ public class InventoryManagementActivity extends AppCompatActivity {
                 .update("isArchived", false)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Item unarchived successfully", Toast.LENGTH_SHORT).show();
-                    loadInventory(); // Reload the inventory to show the unarchived item
+                    loadInventory();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error unarchiving item", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    private void updateInventoryItem(String itemId, String productName, int quantity, double price) {
+    private void updateInventoryItem(String itemId, String productName, int quantity, double price, String imageUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("productName", productName);
         updates.put("quantity", quantity);
         updates.put("price", price);
+
+        if (imageUrl != null) {
+            updates.put("imageUrl", imageUrl);
+        }
 
         firestore.collection("inventory").document(itemId)
                 .update(updates)
@@ -271,22 +385,49 @@ public class InventoryManagementActivity extends AppCompatActivity {
                 });
     }
 
-    // Inventory Item Model Class
+    private void uploadImageAndUpdateItem(Bitmap imageBitmap, String itemId, String productName, int quantity, double price) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Uploading image...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        byte[] imageData = baos.toByteArray();
+
+        String filename = "inventory_" + System.currentTimeMillis() + ".jpg";
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("inventory_images/" + filename);
+
+        UploadTask uploadTask = imageRef.putBytes(imageData);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                progressDialog.dismiss();
+                String imageUrl = uri.toString();
+                updateInventoryItem(itemId, productName, quantity, price, imageUrl);
+            });
+        }).addOnFailureListener(e -> {
+            progressDialog.dismiss();
+            Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+        });
+    }
+
     private static class InventoryItem {
         String id;
         String productName;
         int quantity;
         double price;
+        String imageUrl;
 
-        InventoryItem(String id, String productName, int quantity, double price) {
+        InventoryItem(String id, String productName, int quantity, double price, String imageUrl) {
             this.id = id;
             this.productName = productName;
             this.quantity = quantity;
             this.price = price;
+            this.imageUrl = imageUrl;
         }
     }
 
-    // Main Inventory RecyclerView Adapter
     private class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
 
         @Override
@@ -300,9 +441,23 @@ public class InventoryManagementActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             InventoryItem item = inventoryList.get(position);
 
+            Log.d("INVENTORY", "Binding item: " + item.productName + ", Image: " + item.imageUrl);
+
             holder.tvProductName.setText(item.productName);
             holder.tvQuantity.setText(String.valueOf(item.quantity));
             holder.tvPrice.setText(String.format("₱%.2f", item.price));
+
+            if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
+                Log.d("INVENTORY", "Loading image with Glide: " + item.imageUrl);
+                Glide.with(holder.itemView.getContext())
+                        .load(item.imageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_report_image)
+                        .into(holder.ivProductImage);
+            } else {
+                Log.d("INVENTORY", "No image URL, showing placeholder");
+                holder.ivProductImage.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
 
             holder.btnEdit.setOnClickListener(v -> showEditDialog(item, position));
             holder.btnArchive.setOnClickListener(v -> archiveInventoryItem(item.id, position));
@@ -316,6 +471,7 @@ public class InventoryManagementActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvProductName, tvQuantity, tvPrice;
             ImageButton btnEdit, btnArchive;
+            ImageView ivProductImage;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -324,11 +480,11 @@ public class InventoryManagementActivity extends AppCompatActivity {
                 tvPrice = itemView.findViewById(R.id.tvPrice);
                 btnEdit = itemView.findViewById(R.id.btnEdit);
                 btnArchive = itemView.findViewById(R.id.btnArchive);
+                ivProductImage = itemView.findViewById(R.id.ivProductImage);
             }
         }
     }
 
-    // Archived Items Adapter for the dialog
     private class ArchivedAdapter extends RecyclerView.Adapter<ArchivedAdapter.ViewHolder> {
         private List<InventoryItem> archivedItems;
 
@@ -388,11 +544,26 @@ public class InventoryManagementActivity extends AppCompatActivity {
         EditText etProductName = dialogView.findViewById(R.id.etProductName);
         EditText etQuantity = dialogView.findViewById(R.id.etQuantity);
         EditText etPrice = dialogView.findViewById(R.id.etPrice);
+        ImageView ivProductImage = dialogView.findViewById(R.id.ivProductImage);
+        MaterialButton btnSelectImage = dialogView.findViewById(R.id.btnSelectImage);
 
-        // Set current values
         etProductName.setText(item.productName);
         etQuantity.setText(String.valueOf(item.quantity));
         etPrice.setText(String.valueOf(item.price));
+
+        if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(item.imageUrl)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .into(ivProductImage);
+        }
+
+        btnSelectImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+            currentDialogImageView = ivProductImage;
+        });
 
         builder.setPositiveButton("Update", (dialog, which) -> {
             String productName = etProductName.getText().toString().trim();
@@ -407,7 +578,12 @@ public class InventoryManagementActivity extends AppCompatActivity {
             try {
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
-                updateInventoryItem(item.id, productName, quantity, price);
+
+                if (dialogSelectedBitmap != null) {
+                    uploadImageAndUpdateItem(dialogSelectedBitmap, item.id, productName, quantity, price);
+                } else {
+                    updateInventoryItem(item.id, productName, quantity, price, item.imageUrl);
+                }
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Please enter valid numbers", Toast.LENGTH_SHORT).show();
             }
