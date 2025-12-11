@@ -16,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Typeface;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +52,10 @@ public class InventoryManagementActivity extends AppCompatActivity {
     private ImageView currentDialogImageView;
     private androidx.appcompat.app.AlertDialog currentAddDialog;
     private Bitmap dialogSelectedBitmap;
+
+    // Add these constants at the top of InventoryManagementActivity class
+    private static final int LOW_STOCK_THRESHOLD = 10;
+    private static final int CRITICAL_STOCK_THRESHOLD = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -447,6 +453,22 @@ public class InventoryManagementActivity extends AppCompatActivity {
             holder.tvQuantity.setText(String.valueOf(item.quantity));
             holder.tvPrice.setText(String.format("₱%.2f", item.price));
 
+            // Add stock level indication
+            // Replace the color setting section with:
+            if (item.quantity <= CRITICAL_STOCK_THRESHOLD) {
+                // Critical stock - RED
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.stock_critical));
+                holder.tvQuantity.setTypeface(null, Typeface.BOLD);
+            } else if (item.quantity <= LOW_STOCK_THRESHOLD) {
+                // Low stock - YELLOW/ORANGE
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.stock_low));
+                holder.tvQuantity.setTypeface(null, Typeface.BOLD);
+            } else {
+                // Normal stock
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.stock_normal));
+                holder.tvQuantity.setTypeface(null, Typeface.NORMAL);
+            }
+
             if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
                 Log.d("INVENTORY", "Loading image with Glide: " + item.imageUrl);
                 Glide.with(holder.itemView.getContext())
@@ -506,6 +528,15 @@ public class InventoryManagementActivity extends AppCompatActivity {
             holder.tvProductName.setText(item.productName);
             holder.tvQuantity.setText(String.valueOf(item.quantity));
             holder.tvPrice.setText(String.format("₱%.2f", item.price));
+
+            // Add the same color coding for archived items
+            if (item.quantity <= CRITICAL_STOCK_THRESHOLD) {
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark));
+            } else if (item.quantity <= LOW_STOCK_THRESHOLD) {
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_orange_dark));
+            } else {
+                holder.tvQuantity.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.black));
+            }
 
             holder.btnUnarchive.setOnClickListener(v -> {
                 unarchiveItem(item.id);

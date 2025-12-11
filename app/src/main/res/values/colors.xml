@@ -17,6 +17,10 @@
                 <color name="blue">#2196F3</color>
                 <color name="light_gray">#F5F5F5</color>
 
+        <color name="stock_critical">#FF0000</color>    <!-- Red -->
+        <color name="stock_low">#FFA500</color>        <!-- Orange/Yellow -->
+        <color name="stock_normal">#000000</color>     <!-- Black -->
+
 
                 <!-- Existing colors -->
                 <color name="primary_color">#2196F3</color>
